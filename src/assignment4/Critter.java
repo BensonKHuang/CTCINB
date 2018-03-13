@@ -111,11 +111,10 @@ public abstract class Critter {
         else if(y_coord < 0){
             y_coord += Params.world_height + 1;
         }
-
     }
 
 	public abstract void doTimeStep();
-	public abstract boolean fight(String oponent);
+	public abstract boolean fight(String opponent);
 	
 	/**
 	 * create and initialize a Critter subclass.
@@ -128,6 +127,17 @@ public abstract class Critter {
 	 * @throws InvalidCritterException
 	 */
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
+
+	    try{
+	        Class c = Class.forName(critter_class_name);
+	        Critter cr = (Critter) c.newInstance();
+	        population.add(cr);
+
+        }
+        catch(Exception ClassNotFoundException){
+	        throw new InvalidCritterException(critter_class_name);
+        }
+
 	}
 	
 	/**
