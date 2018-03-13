@@ -34,32 +34,85 @@ public abstract class Critter {
 	
 	private static java.util.Random rand = new java.util.Random();
 	public static int getRandomInt(int max) {
-		return rand.nextInt(max);
+
+	    return rand.nextInt(max);
 	}
 	
 	public static void setSeed(long new_seed) {
-		rand = new java.util.Random(new_seed);
+
+	    rand = new java.util.Random(new_seed);
 	}
 	
 	
 	/* a one-character long string that visually depicts your critter in the ASCII interface */
-	public String toString() { return ""; }
+	public String toString() {
+
+	    return "";
+	}
 	
 	private int energy = 0;
-	protected int getEnergy() { return energy; }
+	protected int getEnergy() {
+
+		return energy;
+	}
 	
 	private int x_coord;
 	private int y_coord;
 	
 	protected final void walk(int direction) {
+
+	    move(direction, 1);
+	    fixCoord();
+
+        energy -= Params.walk_energy_cost;
 	}
 	
 	protected final void run(int direction) {
-		
+
+	    move(direction, 2);
+	    fixCoord();
+
+	    energy -= Params.run_energy_cost;
 	}
 	
 	protected final void reproduce(Critter offspring, int direction) {
 	}
+
+
+	private void move(int direction, int dist){
+
+        if(direction == 0 || direction == 1 || direction == 7){
+            x_coord += dist;
+        }
+        else if(direction == 3 || direction ==4 || direction == 5){
+            x_coord -= dist;
+        }
+
+        if(direction == 1 || direction == 2 || direction == 3){
+            y_coord -= dist;
+        }
+        else if(direction == 5 || direction == 6 || direction == 7) {
+            y_coord += dist;
+        }
+    }
+
+    private void fixCoord(){
+
+        if(x_coord >= Params.world_width){
+            x_coord %= Params.world_width;
+        }
+        else if(x_coord < 0){
+            x_coord += Params.world_width + 1;
+        }
+
+        if(y_coord >= Params.world_height){
+            y_coord %= Params.world_height;
+        }
+        else if(y_coord < 0){
+            y_coord += Params.world_height + 1;
+        }
+
+    }
 
 	public abstract void doTimeStep();
 	public abstract boolean fight(String oponent);
