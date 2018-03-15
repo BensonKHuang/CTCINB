@@ -24,6 +24,7 @@ import java.util.List;
 
 public abstract class Critter {
 	private static String myPackage;
+	//private static List<List<List<Critter>>> mapGrid = new List<List<List<Critter>>>;
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();
 
@@ -76,6 +77,16 @@ public abstract class Critter {
 	}
 	
 	protected final void reproduce(Critter offspring, int direction) {
+		if(this.energy <= Params.min_reproduce_energy){
+			return;
+		}
+
+		offspring.energy = (this.energy / 2) + Params.walk_energy_cost;
+		this.energy = (this.energy + 1) / 2; //pseudo CEIL formula
+		offspring.x_coord = this.x_coord;
+		offspring.y_coord = this.y_coord;
+		offspring.walk(direction);
+		babies.add(offspring);
 	}
 
 
@@ -102,14 +113,14 @@ public abstract class Critter {
             x_coord %= Params.world_width;
         }
         else if(x_coord < 0){
-            x_coord += Params.world_width + 1;
+            x_coord += Params.world_width ;
         }
 
         if(y_coord >= Params.world_height){
             y_coord %= Params.world_height;
         }
         else if(y_coord < 0){
-            y_coord += Params.world_height + 1;
+            y_coord += Params.world_height;
         }
     }
 
@@ -131,10 +142,13 @@ public abstract class Critter {
 	    try{
 	        Class c = Class.forName(critter_class_name);
 	        Critter cr = (Critter) c.newInstance();
+	        cr.energy = Params.start_energy;
+	        cr.x_coord = getRandomInt(Params.world_width);
+	        cr.y_coord = getRandomInt(Params.world_height);
 	        population.add(cr);
 
         }
-        catch(Exception ClassNotFoundException){
+        catch(ClassNotFoundException | IllegalAccessException | InstantiationException e){
 	        throw new InvalidCritterException(critter_class_name);
         }
 
@@ -148,7 +162,16 @@ public abstract class Critter {
 	 */
 	public static List<Critter> getInstances(String critter_class_name) throws InvalidCritterException {
 		List<Critter> result = new java.util.ArrayList<Critter>();
-	
+		try{
+			for(Critter c : population){
+				if(Class.forName(critter_class_name).isInstance(c)){
+					result.add(c);
+				}
+			}
+		}
+		catch(ClassNotFoundException e){
+			throw new InvalidCritterException(critter_class_name);
+		}
 		return result;
 	}
 	
@@ -188,22 +211,27 @@ public abstract class Critter {
 	 */
 	static abstract class TestCritter extends Critter {
 		protected void setEnergy(int new_energy_value) {
+
 			super.energy = new_energy_value;
 		}
 		
 		protected void setX_coord(int new_x_coord) {
+
 			super.x_coord = new_x_coord;
 		}
 		
 		protected void setY_coord(int new_y_coord) {
+
 			super.y_coord = new_y_coord;
 		}
 		
 		protected int getX_coord() {
+
 			return super.x_coord;
 		}
 		
 		protected int getY_coord() {
+
 			return super.y_coord;
 		}
 		
@@ -214,6 +242,7 @@ public abstract class Critter {
 		 * implemented for grading tests to work.
 		 */
 		protected static List<Critter> getPopulation() {
+
 			return population;
 		}
 		
@@ -224,6 +253,7 @@ public abstract class Critter {
 		 * at either the beginning OR the end of every timestep.
 		 */
 		protected static List<Critter> getBabies() {
+
 			return babies;
 		}
 	}
@@ -232,14 +262,42 @@ public abstract class Critter {
 	 * Clear the world of all critters, dead and alive
 	 */
 	public static void clearWorld() {
-		// Complete this method.
+
+		population.clear();
+		babies.clear();
 	}
 	
 	public static void worldTimeStep() {
-		// Complete this method.
+		for(Critter c : population){
+			c.doTimeStep();
+		}
+		//CREATE HELPER METHODS
+		//handle encounters
+		//kill critters
+		//populate babies
+		//refresh algae count
 	}
 	
 	public static void displayWorld() {
 		// Complete this method.
+		printBorder();
+		for(int row = 0; row < Params.world_height; ++row){
+			System.out.print("|");
+			for(int col = 0; col < Params.world_width; ++col){
+				//print grid (INCOMPLETE)
+			}
+			System.out.println("|");
+		}
+
+		printBorder();
+	}
+	private static void printBorder(){
+		String s = "";
+		s += "+";
+		for(int i = 0; i < Params.world_width; ++i){
+			s+= "-";
+		}
+		s += "+";
+		System.out.println(s);
 	}
 }
