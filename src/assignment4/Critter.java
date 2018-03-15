@@ -24,9 +24,14 @@ import java.util.List;
 
 public abstract class Critter {
 	private static String myPackage;
-	//private static List<List<List<Critter>>> mapGrid = new List<List<List<Critter>>>;
+	private static List<List<List<Critter>>> mapGrid = new List<List<List<Critter>>>;
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();
+
+	private boolean alive;
+	private boolean isAlive(){
+		return alive;
+	}
 
 	// Gets the package name.  This assumes that Critter and its subclasses are all in the same package.
 	static {
@@ -268,15 +273,54 @@ public abstract class Critter {
 	}
 	
 	public static void worldTimeStep() {
+		individualTimeStep();
+		resolveEncounters();
+		population.addAll(babies);
+		babies.clear();
+		removeDeadCritters();
+		respawnAlgae();
+	}
+
+	private static void individualTimeStep(){
 		for(Critter c : population){
 			c.doTimeStep();
+			c.energy -= Params.rest_energy_cost;
+			if(c.energy <= 0){
+				c.alive = false;
+			}
+			else{
+				c.alive = true;
+			}
 		}
-		//CREATE HELPER METHODS
-		//handle encounters
-		//kill critters
-		//populate babies
-		//refresh algae count
 	}
+
+	private static void resolveEncounters(){
+		//need to add encounter logic
+	}
+
+
+	private static void removeDeadCritters(){
+		List<Critter> deadCritters = new java.util.ArrayList<>();
+		for(Critter c : population){
+			if(!c.alive || c.energy <= 0){
+				deadCritters.add(c);
+			}
+		}
+		population.removeAll(deadCritters);
+	}
+
+
+	private static void respawnAlgae(){
+		for(int i = 0; i < Params.refresh_algae_count; ++i){
+			try{
+				Critter.makeCritter(myPackage + "." + "Algae");
+			}
+			catch(InvalidCritterException e){
+				e.printStackTrace(); //do something with exception
+			}
+		}
+	}
+
 	
 	public static void displayWorld() {
 		// Complete this method.
