@@ -30,17 +30,13 @@ public abstract class Critter {
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();
 
-	public static void main(String[] args){
-		initializeMap();
-	}
-
-
 	public static void initializeMap(){
 		for (int row = 0; row < Params.world_height; ++row) {
 			for (int col = 0; col < Params.world_width; ++col) {
 				map[row][col] = new java.util.ArrayList<Critter>(); //sets every cell to empty
 			}
 		}
+		respawnAlgae();
 	}
 
 	private boolean alive;
@@ -89,7 +85,6 @@ public abstract class Critter {
 
 		if(!moved){
 			move(direction, 1);
-			fixCoord();
 			moved = true;
 		}
         energy -= Params.walk_energy_cost;
@@ -99,7 +94,6 @@ public abstract class Critter {
 
 		if(!moved){
 			move(direction, 2);
-			fixCoord();
 			moved = true;
 		}
 	    energy -= Params.run_energy_cost;
@@ -120,7 +114,9 @@ public abstract class Critter {
 
 
 	private void move(int direction, int dist){
-
+		int prevX = x_coord;
+		int prevY = y_coord;
+		map[prevY][prevX].remove(this);
         if(direction == 0 || direction == 1 || direction == 7){
             x_coord += dist;
         }
@@ -134,6 +130,8 @@ public abstract class Critter {
         else if(direction == 5 || direction == 6 || direction == 7) {
             y_coord += dist;
         }
+        fixCoord();
+		map[y_coord][x_coord].add(this);
     }
 
     private void fixCoord(){
@@ -177,6 +175,7 @@ public abstract class Critter {
 	        cr.alive = true;
 	        cr.moved = false;
 	        population.add(cr);
+	        map[cr.y_coord][cr.x_coord].add(cr);
 
         }
         catch(ClassNotFoundException | IllegalAccessException | InstantiationException e){

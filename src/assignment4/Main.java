@@ -69,9 +69,23 @@ public class Main {
 
         /* Do not alter the code above for your submission. */
         /* Write your code below. */
+
+
         
-        // System.out.println("GLHF");
-        
+        System.out.println("GLHF");
+        Critter.setSeed(100);
+        Critter.initializeMap();
+        try{
+            for(int i = 0; i < 20; i++){
+                Critter.makeCritter("assignment4.Craig");
+            }
+        }
+        catch(InvalidCritterException e){
+            e.printStackTrace();
+        }
+        Critter.displayWorld();
+        Critter.worldTimeStep();
+        Critter.displayWorld();
         /* Write your code above */
         System.out.flush();
 
