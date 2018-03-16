@@ -24,18 +24,19 @@ import java.util.List;
 
 public abstract class Critter {
 	private static String myPackage;
-	//private static java.util.ArrayList<java.util.ArrayList<java.util.ArrayList<Critter>>> mapGrid = new java.util.ArrayList<java.util.ArrayList<java.util.ArrayList<Critter>>>();
-	private static ArrayList[][] map = new ArrayList[Params.world_height][Params.world_width];
+	private static List<List<List<Critter>>> map = new ArrayList<List<List<Critter>>>();
+	//private static ArrayList[][] map = new ArrayList[Params.world_height][Params.world_width];
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();
 
 	public static void initializeMap(){
+
 		for (int row = 0; row < Params.world_height; ++row) {
+			map.add(row, new ArrayList<>());
 			for (int col = 0; col < Params.world_width; ++col) {
-				map[row][col] = new java.util.ArrayList<Critter>(); //sets every cell to empty
+				map.get(row).add(col, new ArrayList<Critter>()); //sets every cell to empty
 			}
 		}
-		respawnAlgae();
 	}
 
 	private boolean alive;
@@ -115,7 +116,7 @@ public abstract class Critter {
 	private void move(int direction, int dist){
 		int prevX = x_coord;
 		int prevY = y_coord;
-		map[prevY][prevX].remove(this);
+		map.get(prevY).get(prevX).remove(this);
 
         if(direction == 0 || direction == 1 || direction == 7){
             x_coord += dist;
@@ -131,7 +132,7 @@ public abstract class Critter {
             y_coord += dist;
         }
         fixCoord();
-		map[y_coord][x_coord].add(this);
+		map.get(y_coord).get(x_coord).add(this);
     }
 
     private void fixCoord(){
@@ -175,7 +176,7 @@ public abstract class Critter {
 	        cr.alive = true;
 	        cr.moved = false;
 	        population.add(cr);
-	        map[cr.y_coord][cr.x_coord].add(cr);
+			map.get(cr.y_coord).get(cr.x_coord).add(cr);
 
         }
         catch(ClassNotFoundException | IllegalAccessException | InstantiationException e){
@@ -295,7 +296,7 @@ public abstract class Critter {
 
 		population.clear();
 		babies.clear();
-		map = new java.util.ArrayList[Params.world_height][Params.world_width];
+		initializeMap();
 	}
 	
 	public static void worldTimeStep() {
@@ -305,8 +306,6 @@ public abstract class Critter {
 		removeDeadCritters();
 		respawnAlgae();
 		babyPopulate();
-		population.addAll(babies);
-		babies.clear();
 	}
 
 	private static void individualTimeStep(){
@@ -336,17 +335,17 @@ public abstract class Critter {
 		for (int row = 0; row < Params.world_height; ++row) {
 			for (int col = 0; col < Params.world_width; ++col) {
 
-				while(map[row][col].size() > 1){
-					critterA = (Critter) map[row][col].get(0);
-					critterB = (Critter) map[row][col].get(1);
+				while(map.get(row).get(col).size() > 1){
+					critterA = (Critter) map.get(row).get(col).get(0);
+					critterB = (Critter) map.get(row).get(col).get(1);
 
 					if(critterA.getEnergy() <= 0 ){
-						map[row][col].remove(critterA);
+						map.get(row).get(col).remove(critterA);
 						continue;
 					}
 
 					if(critterB.getEnergy() <= 0 ){
-						map[row][col].remove(critterA);
+						map.get(row).get(col).remove(critterA);
 						continue;
 					}
 
@@ -372,11 +371,11 @@ public abstract class Critter {
 
 						if(luckA >= luckB){
 							critterA.energy += (critterB.energy/2);
-							map[row][col].remove(critterB);
+							map.get(row).get(col).remove(critterB);
 						}
 						else{
 							critterB.energy += (critterA.energy/2);
-							map[row][col].remove(critterA);
+							map.get(row).get(col).remove(critterA);
 						}
 
 					}
@@ -419,8 +418,10 @@ public abstract class Critter {
 
 		for(Critter c : babies){
 
-			map[c.x_coord][c.x_coord].add(c);
+			map.get(c.y_coord).get(c.x_coord).add(c);
 		}
+		population.addAll(babies);
+		babies.clear();
 	}
 	
 	public static void displayWorld() {
@@ -429,7 +430,7 @@ public abstract class Critter {
 		for(int row = 0; row < Params.world_height; ++row){
 			System.out.print("|");
 			for(int col = 0; col < Params.world_width; ++col){
-				ArrayList<Critter> cell = map[row][col];
+				List<Critter> cell = map.get(row).get(col);
 				if(cell.isEmpty()){
 					System.out.print(" ");
 				}
