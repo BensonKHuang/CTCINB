@@ -19,6 +19,8 @@ public class Critter2 extends Critter{
 
     public void doTimeStep(){
 
+        int new_dir = getRandomInt(8);
+
         if(getRandomInt(2) == 1){
             walk(dir);
         }
@@ -28,7 +30,11 @@ public class Critter2 extends Critter{
             reproduce(child, getRandomInt(8));
         }
 
-        dir = getRandomInt(8);
+        while(new_dir != dir){
+            new_dir = getRandomInt(8);
+        }
+
+        dir = new_dir;
     }
 
 
