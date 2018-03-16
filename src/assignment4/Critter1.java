@@ -1,8 +1,15 @@
 package assignment4;
+/*
+*   Virus critter
+*
+*
+*
+ */
 
 public class Critter1 extends Critter {
 
     private int dir;
+    private static int max_litter_size = 2;
 
     public Critter1(){
 
@@ -12,8 +19,6 @@ public class Critter1 extends Critter {
     /**
      * Does time step for Critter1
      * Walks in direction of dir, and sets new distinct direction
-     * Reproduces between 1 and max_litter_size offspring
-     * 1/5 chance to increase max_litter_size, caps off at 8
      */
 
     public void doTimeStep() {
@@ -22,7 +27,9 @@ public class Critter1 extends Critter {
         int new_dir = getRandomInt(8);
         walk(dir);
 
-        if(getEnergy() > 70){
+        //int litter_size = getRandomInt(max_litter_size) + 1;
+
+        if(getEnergy() >= 80){
             createOffspring();
         }
 
