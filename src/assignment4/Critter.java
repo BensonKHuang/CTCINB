@@ -1,7 +1,6 @@
 package assignment4;
 /* CRITTERS Main.java
  * EE422C Project 4 submission by
- * Replace <...> with your actual data.
  * Nimay Kumar
  * nrk472
  * 15470
@@ -117,6 +116,7 @@ public abstract class Critter {
 		int prevX = x_coord;
 		int prevY = y_coord;
 		map[prevY][prevX].remove(this);
+
         if(direction == 0 || direction == 1 || direction == 7){
             x_coord += dist;
         }
@@ -304,6 +304,7 @@ public abstract class Critter {
 		postEncounterTimeStep();
 		removeDeadCritters();
 		respawnAlgae();
+		babyPopulate();
 		population.addAll(babies);
 		babies.clear();
 	}
@@ -410,6 +411,17 @@ public abstract class Critter {
 		}
 	}
 
+
+	/**
+	 * Adds all new babies to the map
+	 */
+	private static void babyPopulate(){
+
+		for(Critter c : babies){
+
+			map[c.x_coord][c.x_coord].add(c);
+		}
+	}
 	
 	public static void displayWorld() {
 
