@@ -14,6 +14,7 @@ package assignment4;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 /* see the PDF for descriptions of the methods and fields in this class
@@ -24,13 +25,32 @@ import java.util.List;
 
 public abstract class Critter {
 	private static String myPackage;
-	private static List<List<List<Critter>>> mapGrid = new List<List<List<Critter>>>;
+	//private static java.util.ArrayList<java.util.ArrayList<java.util.ArrayList<Critter>>> mapGrid = new java.util.ArrayList<java.util.ArrayList<java.util.ArrayList<Critter>>>();
+	private static ArrayList[][] map = new ArrayList[Params.world_height][Params.world_width];
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();
 
+	public static void main(String[] args){
+		initializeMap();
+	}
+
+
+	public static void initializeMap(){
+		for (int row = 0; row < Params.world_height; ++row) {
+			for (int col = 0; col < Params.world_width; ++col) {
+				map[row][col] = new java.util.ArrayList<Critter>(); //sets every cell to empty
+			}
+		}
+	}
+
 	private boolean alive;
+	private boolean moved;
+
 	private boolean isAlive(){
 		return alive;
+	}
+	private boolean hasMoved(){
+		return moved;
 	}
 
 	// Gets the package name.  This assumes that Critter and its subclasses are all in the same package.
@@ -67,22 +87,26 @@ public abstract class Critter {
 	
 	protected final void walk(int direction) {
 
-	    move(direction, 1);
-	    fixCoord();
-
+		if(!moved){
+			move(direction, 1);
+			fixCoord();
+			moved = true;
+		}
         energy -= Params.walk_energy_cost;
 	}
 	
 	protected final void run(int direction) {
 
-	    move(direction, 2);
-	    fixCoord();
-
+		if(!moved){
+			move(direction, 2);
+			fixCoord();
+			moved = true;
+		}
 	    energy -= Params.run_energy_cost;
 	}
 	
 	protected final void reproduce(Critter offspring, int direction) {
-		if(this.energy <= Params.min_reproduce_energy){
+		if(this.getEnergy() < Params.min_reproduce_energy){
 			return;
 		}
 
@@ -150,6 +174,8 @@ public abstract class Critter {
 	        cr.energy = Params.start_energy;
 	        cr.x_coord = getRandomInt(Params.world_width);
 	        cr.y_coord = getRandomInt(Params.world_height);
+	        cr.alive = true;
+	        cr.moved = false;
 	        population.add(cr);
 
         }
@@ -270,39 +296,103 @@ public abstract class Critter {
 
 		population.clear();
 		babies.clear();
+		map = new java.util.ArrayList[Params.world_height][Params.world_width];
 	}
 	
 	public static void worldTimeStep() {
 		individualTimeStep();
 		resolveEncounters();
-		population.addAll(babies);
-		babies.clear();
+		postEncounterTimeStep();
 		removeDeadCritters();
 		respawnAlgae();
+		population.addAll(babies);
+		babies.clear();
 	}
 
 	private static void individualTimeStep(){
 		for(Critter c : population){
 			c.doTimeStep();
 			c.energy -= Params.rest_energy_cost;
-			if(c.energy <= 0){
+		}
+	}
+
+	private static void postEncounterTimeStep(){
+		for(Critter c: population){
+			if(c.getEnergy() <= 0){
 				c.alive = false;
 			}
 			else{
 				c.alive = true;
+				c.moved = false;
 			}
 		}
 	}
 
-	private static void resolveEncounters(){
-		//need to add encounter logic
+	private static void resolveEncounters() {
+		int luckA, luckB;
+		Critter critterA, critterB;
+		boolean fightA, fightB;
+
+		for (int row = 0; row < Params.world_height; ++row) {
+			for (int col = 0; col < Params.world_width; ++col) {
+
+				while(map[row][col].size() > 1){
+					critterA = (Critter) map[row][col].get(0);
+					critterB = (Critter) map[row][col].get(1);
+
+					if(critterA.getEnergy() <= 0 ){
+						map[row][col].remove(critterA);
+						continue;
+					}
+
+					if(critterB.getEnergy() <= 0 ){
+						map[row][col].remove(critterA);
+						continue;
+					}
+
+					fightA = critterA.fight(critterB.toString());
+					fightB = critterB.fight(critterA.toString());
+
+
+					if(sameLocation(critterA, critterB) && critterA.getEnergy() > 0 && critterB.getEnergy() > 0){
+
+						if(fightA){
+							luckA = getRandomInt(critterA.getEnergy());
+						}
+						else{
+							luckA = 0;
+						}
+
+						if(fightB){
+							luckB = getRandomInt(critterB.getEnergy());
+						}
+						else{
+							luckB = 0;
+						}
+
+						if(luckA >= luckB){
+							critterA.energy += (critterB.energy/2);
+							map[row][col].remove(critterB);
+						}
+						else{
+							critterB.energy += (critterA.energy/2);
+							map[row][col].remove(critterA);
+						}
+
+					}
+				}
+			}
+		}
 	}
 
+	private static boolean sameLocation(Critter a, Critter b){
+		return (a.x_coord == b.x_coord && a.y_coord == b.y_coord);
+	}
 
 	private static void removeDeadCritters(){
 		List<Critter> deadCritters = new java.util.ArrayList<>();
 		for(Critter c : population){
-			if(!c.alive || c.energy <= 0){
+			if(!c.alive || c.getEnergy() <= 0){
 				deadCritters.add(c);
 			}
 		}
@@ -323,16 +413,21 @@ public abstract class Critter {
 
 	
 	public static void displayWorld() {
-		// Complete this method.
+
 		printBorder();
 		for(int row = 0; row < Params.world_height; ++row){
 			System.out.print("|");
 			for(int col = 0; col < Params.world_width; ++col){
-				//print grid (INCOMPLETE)
+				ArrayList<Critter> cell = map[row][col];
+				if(cell.isEmpty()){
+					System.out.print(" ");
+				}
+				else{
+					System.out.print(cell.get(0).toString()); //prints first Critter in arraylist (if multiple existing from spawn)
+				}
 			}
 			System.out.println("|");
 		}
-
 		printBorder();
 	}
 	private static void printBorder(){
