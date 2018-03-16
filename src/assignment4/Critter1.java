@@ -3,9 +3,6 @@ package assignment4;
 public class Critter1 extends Critter {
 
     private int dir;
-    private static int max_litter_size = 2;
-
-
 
     public Critter1(){
 
@@ -21,21 +18,12 @@ public class Critter1 extends Critter {
 
     public void doTimeStep() {
 
+
         int new_dir = getRandomInt(8);
         walk(dir);
 
-        if(getEnergy() > 120){
-
-            int litter_size = getRandomInt(max_litter_size) + 1;
-
-            while(litter_size > 0){
-                createOffspring();
-                --litter_size;
-            }
-
-            if(getRandomInt(5)== 0 && max_litter_size < 8){
-                ++max_litter_size;
-            }
+        if(getEnergy() > 70){
+            createOffspring();
         }
 
         while(new_dir != dir){
@@ -56,6 +44,7 @@ public class Critter1 extends Critter {
     }
 
     private void createOffspring(){
+
         Critter1 child = new Critter1();
         reproduce(child, getRandomInt(8));
     }
