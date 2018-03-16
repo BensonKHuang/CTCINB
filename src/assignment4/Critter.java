@@ -341,11 +341,13 @@ public abstract class Critter {
 
 					if(critterA.getEnergy() <= 0 ){
 						map.get(row).get(col).remove(critterA);
-						continue;
 					}
 
 					if(critterB.getEnergy() <= 0 ){
 						map.get(row).get(col).remove(critterA);
+					}
+
+					if(critterA.getEnergy() <= 0 || critterB.getEnergy() <= 0){
 						continue;
 					}
 
