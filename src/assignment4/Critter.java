@@ -96,6 +96,7 @@ public abstract class Critter {
 
 		if(!moved){
 			move(direction, 1);
+            map.get(y_coord).get(x_coord).add(this);
 			moved = true;
 		}
         energy -= Params.walk_energy_cost;
@@ -105,6 +106,7 @@ public abstract class Critter {
 
 		if(!moved){
 			move(direction, 2);
+            map.get(y_coord).get(x_coord).add(this);
 			moved = true;
 		}
 	    energy -= Params.run_energy_cost;
@@ -117,11 +119,11 @@ public abstract class Critter {
 
 		offspring.alive = true;
 		offspring.moved = false;
-		offspring.energy = (this.energy / 2) + Params.walk_energy_cost;
+		offspring.energy = (this.energy / 2);
 		this.energy = (this.energy + 1) / 2; //pseudo CEIL formula
 		offspring.x_coord = this.x_coord;
 		offspring.y_coord = this.y_coord;
-		offspring.walk(direction);
+		offspring.move(direction, 1);
 		babies.add(offspring);
 	}
 
@@ -146,7 +148,7 @@ public abstract class Critter {
             y_coord += dist;
         }
         fixCoord();
-		map.get(y_coord).get(x_coord).add(this);
+		//map.get(y_coord).get(x_coord).add(this);
     }
 
     private void fixCoord(){
@@ -444,7 +446,12 @@ public abstract class Critter {
 	 * Adds all new babies to the map
 	 */
 	private static void babyPopulate(){
-	    
+
+	    for(Critter c : babies){
+
+	        map.get(c.y_coord).get(c.x_coord).add(c);
+        }
+
 		population.addAll(babies);
 		babies.clear();
 	}
