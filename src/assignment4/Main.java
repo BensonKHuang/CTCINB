@@ -12,8 +12,14 @@ package assignment4;
  * Spring 2018
  */
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Scanner;
-import java.io.*;
 
 
 /*
@@ -70,22 +76,119 @@ public class Main {
         /* Do not alter the code above for your submission. */
         /* Write your code below. */
 
-
-        
-        System.out.println("GLHF");
-        Critter.setSeed(100);
         Critter.initializeMap();
-        try{
-            for(int i = 0; i < 20; i++){
-                Critter.makeCritter("assignment4.Craig");
+        boolean quit = false;
+        while(!quit){
+            String in = kb.nextLine();
+            String[] inArray = in.split(" ");
+
+            switch(inArray[0]){
+                case "quit":
+                    if(inArray.length != 1){
+                        System.out.println("error processing: " + in);
+                    }
+                    else{
+                        quit = true;
+                    }
+                    break;
+
+                case "show":
+                    if(inArray.length != 1){
+                        System.out.println("error processing: " + in);
+                    }
+                    else{
+                        Critter.displayWorld();
+                    }
+                    break;
+
+                case "step":
+                    if(inArray.length > 2){
+                        System.out.println("error processing: " + in);
+                    }
+                    else{
+                        try{
+                            int numStep = Integer.parseInt(inArray[1]);
+                            for(int i = 0; i < numStep; ++i){
+                                Critter.worldTimeStep();
+                            }
+                        }
+                        catch(IndexOutOfBoundsException e){
+                            Critter.worldTimeStep();
+                        }
+                        catch(NumberFormatException e){
+                            System.out.println("error processing: " + in);
+                        }
+                    }
+                    break;
+
+                case "seed":
+                    if(inArray.length > 2){
+                        System.out.println("error processing: " + in);
+                    }
+                    else{
+                        try{
+                            int numStep = Integer.parseInt(inArray[1]);
+                            Critter.setSeed(numStep);
+                        }
+                        catch(NumberFormatException | IndexOutOfBoundsException e){
+                            System.out.println("error processing: " + in);
+                        }
+                    }
+                    break;
+
+                case "make":
+                    if(inArray.length > 3 || inArray.length <= 1){
+                        System.out.println("error processing: " + in);
+                    }
+                    else if(inArray.length == 3){
+                        try{
+                            int count = Integer.parseInt(inArray[2]);
+                            for(int i = 0; i < count; ++i){
+                                Critter.makeCritter(inArray[1]);
+                            }
+                        }
+                        catch(NumberFormatException | InvalidCritterException e){
+                            System.out.println("error processing: " + in);
+                        }
+                    }
+                    else{
+                        try{
+                            Critter.makeCritter(inArray[1]);
+                        }
+                        catch(InvalidCritterException e){
+                            System.out.println("error processing: " + in);
+                        }
+                    }
+                    break;
+
+                case "stats":
+                    if(inArray.length != 2){
+                        System.out.println("error processing: " + in);
+                    }
+                    else if(inArray[1].equals("Critter")){
+                        System.out.println("error processing: " + in);
+                    }
+                    else{
+                        String critterName = inArray[1];
+                        try{
+                            List<Critter> list = Critter.getInstances(critterName);
+                            Class critterClass = Class.forName(myPackage + "." + critterName); //Reflection
+                            Method methodcall = critterClass.getMethod("runStats", List.class);
+                            Critter critterInstance = (Critter) critterClass.newInstance();
+                            methodcall.invoke(critterInstance, list);
+                        }
+                        catch(InvalidCritterException | ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e){
+                            System.out.println("error processing: " + in);
+                        }
+                    }
+                    break;
+
+                default:
+                    System.out.println("invalid command: " + in);
+                    break;
             }
         }
-        catch(InvalidCritterException e){
-            e.printStackTrace();
-        }
-        Critter.displayWorld();
-        Critter.worldTimeStep();
-        Critter.displayWorld();
+
         /* Write your code above */
         System.out.flush();
 

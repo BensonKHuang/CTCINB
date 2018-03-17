@@ -37,6 +37,17 @@ public abstract class Critter {
 				map.get(row).add(col, new ArrayList<Critter>()); //sets every cell to empty
 			}
 		}
+//		try{
+//			for(int i = 0; i < 25; ++i){
+//				Critter.makeCritter("Craig");
+//			}
+//			for(int i = 0; i < 100; ++i){
+//				Critter.makeCritter("Algae");
+//			}
+//		}
+//		catch(InvalidCritterException e){
+//			e.printStackTrace(); //do something with exception
+//		}
 	}
 
 	private boolean alive;
@@ -168,7 +179,7 @@ public abstract class Critter {
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
 
 	    try{
-	        Class c = Class.forName(critter_class_name);
+	        Class c = Class.forName(myPackage + "." + critter_class_name);
 	        Critter cr = (Critter) c.newInstance();
 	        cr.energy = Params.start_energy;
 	        cr.x_coord = getRandomInt(Params.world_width);
@@ -195,7 +206,7 @@ public abstract class Critter {
 		List<Critter> result = new java.util.ArrayList<Critter>();
 		try{
 			for(Critter c : population){
-				if(Class.forName(critter_class_name).isInstance(c)){
+				if(Class.forName(myPackage + "." + critter_class_name).isInstance(c)){
 					result.add(c);
 				}
 			}
@@ -321,7 +332,6 @@ public abstract class Critter {
 				c.alive = false;
 			}
 			else{
-				c.alive = true;
 				c.moved = false;
 			}
 		}
@@ -373,10 +383,12 @@ public abstract class Critter {
 
 						if(luckA >= luckB){
 							critterA.energy += (critterB.energy/2);
+							critterB.alive = false;
 							map.get(row).get(col).remove(critterB);
 						}
 						else{
 							critterB.energy += (critterA.energy/2);
+							critterA.alive = false;
 							map.get(row).get(col).remove(critterA);
 						}
 
@@ -404,7 +416,7 @@ public abstract class Critter {
 	private static void respawnAlgae(){
 		for(int i = 0; i < Params.refresh_algae_count; ++i){
 			try{
-				Critter.makeCritter(myPackage + "." + "Algae");
+				Critter.makeCritter("Algae");
 			}
 			catch(InvalidCritterException e){
 				e.printStackTrace(); //do something with exception
