@@ -95,6 +95,7 @@ public abstract class Critter {
 	protected final void walk(int direction) {
 
 		if(!moved){
+			map.get(y_coord).get(x_coord).remove(this);
 			move(direction, 1);
             map.get(y_coord).get(x_coord).add(this);
 			moved = true;
@@ -105,6 +106,7 @@ public abstract class Critter {
 	protected final void run(int direction) {
 
 		if(!moved){
+			map.get(y_coord).get(x_coord).remove(this);
 			move(direction, 2);
             map.get(y_coord).get(x_coord).add(this);
 			moved = true;
@@ -130,9 +132,6 @@ public abstract class Critter {
 
 
 	private void move(int direction, int dist){
-		int prevX = x_coord;
-		int prevY = y_coord;
-		map.get(prevY).get(prevX).remove(this);
 
         if(direction == 0 || direction == 1 || direction == 7){
             x_coord += dist;
@@ -148,7 +147,6 @@ public abstract class Critter {
             y_coord += dist;
         }
         fixCoord();
-		//map.get(y_coord).get(x_coord).add(this);
     }
 
     private void fixCoord(){
@@ -263,13 +261,15 @@ public abstract class Critter {
 		}
 		
 		protected void setX_coord(int new_x_coord) {
-
+			map.get(super.y_coord).get(super.x_coord).remove(this);
 			super.x_coord = new_x_coord;
+			map.get(super.y_coord).get(super.x_coord).add(this);
 		}
 		
 		protected void setY_coord(int new_y_coord) {
-
+			map.get(super.y_coord).get(super.x_coord).remove(this);
 			super.y_coord = new_y_coord;
+			map.get(super.y_coord).get(super.x_coord).add(this);
 		}
 		
 		protected int getX_coord() {
