@@ -115,6 +115,8 @@ public abstract class Critter {
 			return;
 		}
 
+		offspring.alive = true;
+		offspring.moved = false;
 		offspring.energy = (this.energy / 2) + Params.walk_energy_cost;
 		this.energy = (this.energy + 1) / 2; //pseudo CEIL formula
 		offspring.x_coord = this.x_coord;
@@ -122,6 +124,7 @@ public abstract class Critter {
 		offspring.walk(direction);
 		babies.add(offspring);
 	}
+
 
 
 	private void move(int direction, int dist){
@@ -311,10 +314,11 @@ public abstract class Critter {
 	}
 	
 	public static void worldTimeStep() {
+
 		individualTimeStep();
 		resolveEncounters();
 		postEncounterTimeStep();
-		removeDeadCritters();
+        removeDeadCritters();
 		respawnAlgae();
 		babyPopulate();
 	}
@@ -339,11 +343,23 @@ public abstract class Critter {
 
 	private static void resolveEncounters() {
 		int luckA, luckB;
-		Critter critterA, critterB;
+		Critter critterA, critterB, cr;
 		boolean fightA, fightB;
 
 		for (int row = 0; row < Params.world_height; ++row) {
 			for (int col = 0; col < Params.world_width; ++col) {
+
+
+			    if(map.get(row).get(col).size() == 1){
+
+			        cr = (Critter) map.get(row).get(col).get(0);
+
+			        if(cr.getEnergy() <= 0){
+			            map.get(row).get(col).remove(cr);
+                    }
+                }
+
+
 
 				while(map.get(row).get(col).size() > 1){
 					critterA = (Critter) map.get(row).get(col).get(0);
@@ -412,7 +428,6 @@ public abstract class Critter {
 		population.removeAll(deadCritters);
 	}
 
-
 	private static void respawnAlgae(){
 		for(int i = 0; i < Params.refresh_algae_count; ++i){
 			try{
@@ -429,11 +444,7 @@ public abstract class Critter {
 	 * Adds all new babies to the map
 	 */
 	private static void babyPopulate(){
-
-		for(Critter c : babies){
-
-			map.get(c.y_coord).get(c.x_coord).add(c);
-		}
+	    
 		population.addAll(babies);
 		babies.clear();
 	}
