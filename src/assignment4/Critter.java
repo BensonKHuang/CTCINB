@@ -29,6 +29,9 @@ public abstract class Critter {
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();
 
+    /**
+     * Initializes map
+     */
 	public static void initializeMap(){
 
 		for (int row = 0; row < Params.world_height; ++row) {
@@ -84,6 +87,11 @@ public abstract class Critter {
 	}
 	
 	private int energy = 0;
+
+    /**
+     * Getter for energy
+     * @return int representing amoutn of energy
+     */
 	protected int getEnergy() {
 
 		return energy;
@@ -91,7 +99,11 @@ public abstract class Critter {
 	
 	private int x_coord;
 	private int y_coord;
-	
+
+    /**
+     * Moves 1 in direction
+     * @param direction direction to walk
+     */
 	protected final void walk(int direction) {
 
 		if(!moved){
@@ -102,7 +114,11 @@ public abstract class Critter {
 		}
         energy -= Params.walk_energy_cost;
 	}
-	
+
+    /**
+     * Moves 2 in direction
+     * @param direction direction to run
+     */
 	protected final void run(int direction) {
 
 		if(!moved){
@@ -113,8 +129,15 @@ public abstract class Critter {
 		}
 	    energy -= Params.run_energy_cost;
 	}
-	
+
+    /**
+     * Creates new child if enough energy
+     * Sets child coordinates, energy, updates parent energy, moves child, and adds child to babies
+     * @param offspring child critter
+     * @param direction direction in which offspring will move
+     */
 	protected final void reproduce(Critter offspring, int direction) {
+
 		if(this.getEnergy() < Params.min_reproduce_energy){
 			return;
 		}
@@ -129,8 +152,11 @@ public abstract class Critter {
 		babies.add(offspring);
 	}
 
-
-
+    /**
+     * Moves a critter in a direction by dist amount
+     * @param direction direction to move
+     * @param dist amount to move in direction
+     */
 	private void move(int direction, int dist){
 
         if(direction == 0 || direction == 1 || direction == 7){
@@ -149,6 +175,9 @@ public abstract class Critter {
         fixCoord();
     }
 
+    /**
+     * Wraps coordinates around the map
+     */
     private void fixCoord(){
 
         if(x_coord >= Params.world_width){
@@ -176,8 +205,8 @@ public abstract class Critter {
 	 * (Java weirdness: Exception throwing does not work properly if the parameter has lower-case instead of
 	 * upper. For example, if craig is supplied instead of Craig, an error is thrown instead of
 	 * an Exception.)
-	 * @param critter_class_name
-	 * @throws InvalidCritterException
+	 * @param critter_class_name name of critter subclass to be created
+	 * @throws InvalidCritterException if critter_class_name is not a valid critter subclass
 	 */
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
 
@@ -203,7 +232,7 @@ public abstract class Critter {
 	 * Gets a list of critters of a specific type.
 	 * @param critter_class_name What kind of Critter is to be listed.  Unqualified class name.
 	 * @return List of Critters.
-	 * @throws InvalidCritterException
+	 * @throws InvalidCritterException if critter_class_name is not valid Critter subclass
 	 */
 	public static List<Critter> getInstances(String critter_class_name) throws InvalidCritterException {
 		List<Critter> result = new java.util.ArrayList<Critter>();
@@ -314,7 +343,10 @@ public abstract class Critter {
 		babies.clear();
 		initializeMap();
 	}
-	
+
+    /**
+     * Does timestep for every critter in the world, and calls other timestep functions.
+     */
 	public static void worldTimeStep() {
 
 		individualTimeStep();
@@ -325,6 +357,9 @@ public abstract class Critter {
 		babyPopulate();
 	}
 
+    /**
+     * calls doTimeStep for every critter in world
+     */
 	private static void individualTimeStep(){
 		for(Critter c : population){
 			c.doTimeStep();
@@ -332,6 +367,9 @@ public abstract class Critter {
 		}
 	}
 
+    /**
+     * Updates statuses of critters following fights
+     */
 	private static void postEncounterTimeStep(){
 		for(Critter c: population){
 			if(c.getEnergy() <= 0){
@@ -343,15 +381,20 @@ public abstract class Critter {
 		}
 	}
 
+    /**
+     * Handles all possible fights in map.
+     * Loser is set to dead
+     */
 	private static void resolveEncounters() {
 		int luckA, luckB;
 		Critter critterA, critterB, cr;
 		boolean fightA, fightB;
 
+
 		for (int row = 0; row < Params.world_height; ++row) {
 			for (int col = 0; col < Params.world_width; ++col) {
 
-
+			    //Critter dies naturally
 			    if(map.get(row).get(col).size() == 1){
 
 			        cr = (Critter) map.get(row).get(col).get(0);
@@ -361,8 +404,7 @@ public abstract class Critter {
                     }
                 }
 
-
-
+                //encounters to be resolved
 				while(map.get(row).get(col).size() > 1){
 					critterA = (Critter) map.get(row).get(col).get(0);
 					critterB = (Critter) map.get(row).get(col).get(1);
@@ -416,10 +458,19 @@ public abstract class Critter {
 		}
 	}
 
+    /**
+     * Determines whether two critters occupy the same spot
+     * @param a first critter
+     * @param b second critter
+     * @return true if a and b occupy the same map coordinate, false otherwise
+     */
 	private static boolean sameLocation(Critter a, Critter b){
 		return (a.x_coord == b.x_coord && a.y_coord == b.y_coord);
 	}
 
+    /**
+     * Removes all dead critters from population
+     */
 	private static void removeDeadCritters(){
 		List<Critter> deadCritters = new java.util.ArrayList<>();
 		for(Critter c : population){
@@ -430,6 +481,9 @@ public abstract class Critter {
 		population.removeAll(deadCritters);
 	}
 
+    /**
+     * Spawns refresh_algae_count amount of algae per timestep
+     */
 	private static void respawnAlgae(){
 		for(int i = 0; i < Params.refresh_algae_count; ++i){
 			try{
@@ -443,7 +497,7 @@ public abstract class Critter {
 
 
 	/**
-	 * Adds all new babies to the map
+	 * Adds all new babies to the map, population, and clears babies
 	 */
 	private static void babyPopulate(){
 
@@ -455,7 +509,10 @@ public abstract class Critter {
 		population.addAll(babies);
 		babies.clear();
 	}
-	
+
+    /**
+     * Prints out current world map, and all its critters
+     */
 	public static void displayWorld() {
 
 		printBorder();
@@ -474,6 +531,11 @@ public abstract class Critter {
 		}
 		printBorder();
 	}
+
+    /**
+     * Helper function for displayWorld
+     * Prints border of the world
+     */
 	private static void printBorder(){
 		String s = "";
 		s += "+";
