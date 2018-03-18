@@ -1,22 +1,37 @@
 package assignment4;
-
-/*
-*
-* Herbivore Critter
-*
-*
+/* CRITTERS Main.java
+ * EE422C Project 4 submission by
+ * Nimay Kumar
+ * nrk472
+ * 15470
+ * Benson Huang
+ * bkh642
+ * 15470
+ * Slip days used: <0>
+ * Spring 2018
  */
 
+//Herbivore critter
 public class Critter2 extends Critter{
 
     private int dir;
 
 
+    /**
+     * Returns new Critter2
+     * sets direction randomly
+     */
     public Critter2(){
 
         dir = getRandomInt(8);
     }
 
+    /**
+     * Does 1 time step of action for Critter2 objects
+     * 1/2 chance to walk. 1/2 chance to rest
+     * Reproduces at 120 energy
+     * Sets new direction that is different from current direction
+     */
     public void doTimeStep(){
 
         int new_dir = getRandomInt(8);
@@ -37,6 +52,11 @@ public class Critter2 extends Critter{
         dir = new_dir;
     }
 
+    /**
+     * Only fights against algae
+     * @param opponent String of opponent
+     * @return true if opponent is algae, false else
+     */
 
     public boolean fight(String opponent){
 
@@ -47,8 +67,20 @@ public class Critter2 extends Critter{
         return false;
     }
 
+    /**
+     * Returns H to represent Herbivore
+     */
     public String toString(){
 
         return "H";
+    }
+
+    /**
+     * Prints out number of Critter2 on map
+     * @param herbivores list of all Critter2 alive
+     */
+    public static void runStats(java.util.List<Critter> herbivores ){
+
+        System.out.println(herbivores.size() + " total Herbivores");
     }
 }
