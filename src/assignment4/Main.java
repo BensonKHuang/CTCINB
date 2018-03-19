@@ -173,11 +173,10 @@ public class Main {
                         try{
                             List<Critter> list = Critter.getInstances(critterName);
                             Class critterClass = Class.forName(myPackage + "." + critterName); //Reflection
-                            Method methodcall = critterClass.getMethod("runStats", List.class);
-                            Critter critterInstance = (Critter) critterClass.newInstance();
-                            methodcall.invoke(critterInstance, list);
+                            Method methodCall = critterClass.getMethod("runStats", List.class);
+                            methodCall.invoke(null, list);
                         }
-                        catch(InvalidCritterException | ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e){
+                        catch(InvalidCritterException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoClassDefFoundError e){
                             System.out.println("error processing: " + in);
                         }
                     }

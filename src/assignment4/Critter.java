@@ -13,6 +13,7 @@ package assignment4;
 
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -212,7 +213,7 @@ public abstract class Critter {
 
 	    try{
 	        Class c = Class.forName(myPackage + "." + critter_class_name);
-	        Critter cr = (Critter) c.newInstance();
+	        Critter cr = (Critter) c.getDeclaredConstructor().newInstance();
 	        cr.energy = Params.start_energy;
 	        cr.x_coord = getRandomInt(Params.world_width);
 	        cr.y_coord = getRandomInt(Params.world_height);
@@ -222,9 +223,9 @@ public abstract class Critter {
 			map.get(cr.y_coord).get(cr.x_coord).add(cr);
 
         }
-        catch(ClassNotFoundException | IllegalAccessException | InstantiationException e){
+        catch(ClassNotFoundException | InvocationTargetException| IllegalAccessException | InstantiationException | NoSuchMethodException | NoClassDefFoundError e){
 	        throw new InvalidCritterException(critter_class_name);
-        }
+		}
 
 	}
 	
