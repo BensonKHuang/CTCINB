@@ -527,13 +527,69 @@ public abstract class Critter {
      * Helper function for displayWorld
      * Prints border of the world
      */
-	private static void printBorder(){
-		String s = "";
-		s += "+";
-		for(int i = 0; i < Params.world_width; ++i){
-			s+= "-";
-		}
-		s += "+";
-		System.out.println(s);
-	}
+	private static void printBorder() {
+        String s = "";
+        s += "+";
+        for (int i = 0; i < Params.world_width; ++i) {
+            s += "-";
+        }
+        s += "+";
+        System.out.println(s);
+
+    }
+
+    private void flee(){
+
+        if(moved){
+            return;
+        }
+
+        for(int i = 0; i < 8; ++i){
+
+            if(isEmpty(i)){
+                move(i, 1);
+                break;
+            }
+        }
+    }
+
+    private boolean isEmpty(int dir){
+
+        int new_x = x_coord;
+        int new_y = y_coord;
+
+        if(dir == 0 || dir == 1 || dir == 7){
+            ++new_x;
+        }
+        else if(dir == 3 || dir == 4 || dir ==5){
+            --new_x;
+        }
+
+        if(dir == 1 || dir == 2 || dir ==3){
+            --new_y;
+        }
+        else if(dir == 5 || dir == 6 || dir == 7){
+            ++new_y;
+        }
+
+        if(new_x >= Params.world_width){
+            new_x %= Params.world_width;
+        }
+        else if(new_x < 0){
+            new_x += Params.world_width ;
+        }
+
+        if(new_y >= Params.world_height){
+            new_y %= Params.world_height;
+        }
+        else if(new_y < 0){
+            new_y += Params.world_height;
+        }
+        
+        if(map.get(new_y).get(new_x).size() > 0){
+            return false;
+        }
+
+        return true;
+    }
 }
