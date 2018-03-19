@@ -33,25 +33,14 @@ public abstract class Critter {
     /**
      * Initializes map
      */
-	public static void initializeMap(){
-
+	private static void initializeMap(){
+		map.clear();
 		for (int row = 0; row < Params.world_height; ++row) {
 			map.add(row, new ArrayList<>());
 			for (int col = 0; col < Params.world_width; ++col) {
 				map.get(row).add(col, new ArrayList<Critter>()); //sets every cell to empty
 			}
 		}
-//		try{
-//			for(int i = 0; i < 25; ++i){
-//				Critter.makeCritter("Craig");
-//			}
-//			for(int i = 0; i < 100; ++i){
-//				Critter.makeCritter("Algae");
-//			}
-//		}
-//		catch(InvalidCritterException e){
-//			e.printStackTrace(); //do something with exception
-//		}
 	}
 
 	private boolean alive;
@@ -67,6 +56,7 @@ public abstract class Critter {
 	// Gets the package name.  This assumes that Critter and its subclasses are all in the same package.
 	static {
 		myPackage = Critter.class.getPackage().toString().split(" ")[1];
+		initializeMap();
 	}
 	
 	private static java.util.Random rand = new java.util.Random();
