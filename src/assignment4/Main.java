@@ -76,7 +76,6 @@ public class Main {
         /* Do not alter the code above for your submission. */
         /* Write your code below. */
 
-        Critter.initializeMap();
         boolean quit = false;
         while(!quit){
             String in = kb.nextLine();
