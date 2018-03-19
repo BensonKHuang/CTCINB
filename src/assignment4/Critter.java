@@ -548,7 +548,7 @@ public abstract class Critter {
 
             if(isEmpty(i)){
                 move(i, 1);
-                break;
+                return;
             }
         }
     }
@@ -585,7 +585,7 @@ public abstract class Critter {
         else if(new_y < 0){
             new_y += Params.world_height;
         }
-        
+
         if(map.get(new_y).get(new_x).size() > 0){
             return false;
         }
