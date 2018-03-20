@@ -544,12 +544,13 @@ public abstract class Critter {
             return;
         }
 
-        for(int i = 0; i < 8; ++i){
-
-            if(isEmpty(i)){
-                move(i, 1);
-                return;
-            }
+        int new_dir = getRandomInt(8);
+        
+        if(isEmpty(new_dir)){
+            move(new_dir, 1);
+        }
+        else{
+            energy -= Params.rest_energy_cost;
         }
     }
 
