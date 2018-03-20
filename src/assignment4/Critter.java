@@ -541,16 +541,13 @@ public abstract class Critter {
     private void flee(){
 
         if(moved){
+        	energy -= Params.walk_energy_cost;
             return;
         }
 
         int new_dir = getRandomInt(8);
-        
         if(isEmpty(new_dir)){
-            move(new_dir, 1);
-        }
-        else{
-            energy -= Params.rest_energy_cost;
+            walk(new_dir);
         }
     }
 
