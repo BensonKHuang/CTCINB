@@ -56,7 +56,6 @@ public abstract class Critter {
 	// Gets the package name.  This assumes that Critter and its subclasses are all in the same package.
 	static {
 		myPackage = Critter.class.getPackage().toString().split(" ")[1];
-		initializeMap();
 	}
 	
 	private static java.util.Random rand = new java.util.Random();
@@ -412,9 +411,15 @@ public abstract class Critter {
 						continue;
 					}
 
-					fightA = critterA.fight(critterB.toString());
-					fightB = critterB.fight(critterA.toString());
 
+					fightA = critterA.fight(critterB.toString());
+					if(!fightA && !(critterA instanceof TestCritter)){
+						critterA.flee();
+					}
+					fightB = critterB.fight(critterA.toString());
+					if(!fightB && !(critterB instanceof TestCritter)){
+						critterA.flee();
+					}
 
 					if(sameLocation(critterA, critterB) && critterA.getEnergy() > 0 && critterB.getEnergy() > 0){
 
