@@ -26,7 +26,7 @@ import java.util.List;
 public abstract class Critter {
 	private static String myPackage;
 	private static List<List<List<Critter>>> map = new ArrayList<List<List<Critter>>>();
-	//private static ArrayList[][] map = new ArrayList[Params.world_height][Params.world_width];
+	private static List<Critter3> reincarnation = new ArrayList<Critter3>();
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();
 
@@ -355,6 +355,15 @@ public abstract class Critter {
 			c.doTimeStep();
 			c.energy -= Params.rest_energy_cost;
 		}
+        List<Critter3> reincarnated = new ArrayList<>();
+		for(Critter3 hindu : reincarnation){
+		    hindu.doTimeStep();
+            if(!hindu.getDead()){
+                reincarnated.add(hindu);
+            }
+        }
+        reincarnation.removeAll(reincarnated);
+		reincarnated.clear();
 	}
 
     /**
@@ -472,6 +481,10 @@ public abstract class Critter {
 		for(Critter c : population){
 			if(!c.alive || c.getEnergy() <= 0){
 				deadCritters.add(c);
+				if(c instanceof Critter3){
+				    ((Critter3) c).setDead();
+				    reincarnation.add((Critter3) c);
+                }
 			}
 		}
 		population.removeAll(deadCritters);

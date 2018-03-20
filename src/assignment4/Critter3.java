@@ -11,18 +11,21 @@ package assignment4;
  * Spring 2018
  */
 
-//Carnivore critter
+//The Hindu, reincarnates after it dies after a grace period
+//Has chance to reproduce any Critter
 public class Critter3 extends Critter{
 
-
     private int dir;
+    private boolean isDead;
+    private int respawn_time;
 
     /**
      * Returns new Critter3
      * sets direction randomly
      */
     public Critter3(){
-
+        isDead = false;
+        respawn_time = 3;
         dir = getRandomInt(8);
     }
 
@@ -33,51 +36,92 @@ public class Critter3 extends Critter{
      * Sets new direction randomly
      */
     public void doTimeStep(){
-
-        int action = getRandomInt(3);
-
-        if(action <= 1){
-            run(dir);
+        if(isDead){
+            if(respawn_time == 0){
+                int reincarnation = getRandomInt(10);
+                try{
+                    switch(reincarnation){
+                        case 0:
+                            makeCritter("Algae");
+                            break;
+                        case 1:
+                            makeCritter("Critter1");
+                            break;
+                        case 2:
+                            makeCritter("Critter2");
+                            break;
+                        case 3:
+                            makeCritter("Critter4");
+                            break;
+                        default:
+                            makeCritter("Critter3");
+                            break;
+                    }
+                    isDead = false;
+                }
+                catch (InvalidCritterException e){
+                    e.printStackTrace(); //do something with exception
+                }
+            }
+            else{
+                --respawn_time;
+            }
         }
         else{
-            walk(dir);
-        }
+            int action = getRandomInt(3);
 
-        if(getEnergy() >= 140){
-            Critter3 child = new Critter3();
-            reproduce(child, getRandomInt(8));
-        }
+            if(action <= 1){
+                run(dir);
+            }
+            else{
+                walk(dir);
+            }
 
-        dir = getRandomInt(8);
+            if(getEnergy() >= 140){
+                Critter3 child = new Critter3();
+                reproduce(child, getRandomInt(8));
+            }
+
+            dir = getRandomInt(8);
+        }
     }
 
     /**
      * Returns boolean whether or not Critter3 will fight
-     * @param opponent String representing opponenet
+     * @param opponent String representing opponent
      * @return true if opponent is another critter, false if opponent is algae
      */
     public boolean fight(String opponent) {
 
-        if(opponent.equals("@")){
+        if(opponent.toString().equals("H")){
             return false;
         }
-
         return true;
     }
 
     /**
-     *returns R to represent carnivoRe
+     *returns H to represent hindu
      */
     public String toString(){
-        return "R";
+        return "H";
     }
 
     /**
      * Prints out number of carnivores on map
-     * @param carnivores list of all living carnivores
+     * @param hindus list of all living hindus
      */
-    public static void runStats(java.util.List<Critter> carnivores ){
+    public static void runStats(java.util.List<Critter> hindus){
 
-        System.out.println(carnivores.size() + " total Carnivores");
+        System.out.println(hindus.size() + " total Hindus");
+    }
+
+    /**
+     * sets dead as true for reincarnation logic
+     */
+    public void setDead(){
+        isDead = true;
+    }
+    public boolean getDead(){
+        return isDead;
     }
 }
