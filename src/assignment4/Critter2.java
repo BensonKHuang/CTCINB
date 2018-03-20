@@ -45,7 +45,7 @@ public class Critter2 extends Critter{
             reproduce(child, getRandomInt(8));
         }
 
-        while(new_dir != dir){
+        while(new_dir == dir){
             new_dir = getRandomInt(8);
         }
 

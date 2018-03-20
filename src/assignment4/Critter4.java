@@ -11,7 +11,7 @@ package assignment4;
  * Spring 2018
  */
 
-//Cannibal critter
+//Praying Mantis critter, reproduces and then eats companion
 public class Critter4 extends Critter{
 
 
@@ -33,32 +33,33 @@ public class Critter4 extends Critter{
      */
     public void doTimeStep(){
 
-        int action = getRandomInt(3);
+        int action = getRandomInt(2);
 
-        if(action == 2){
+        if(action == 1){
             run(dir);
         }
-        else if (action == 1){
+        else if (action == 0){
             walk(dir);
-        }
-
-        if(getEnergy() >= 125){
-
-            Critter4 child = new Critter4();
-            reproduce(child, getRandomInt(8));
         }
 
         dir = getRandomInt(8);
     }
 
     /**
-     * Only fights itself, hence Cannibal
+     * Only fights itself, hence Praying Mantis
      * @param opponent Critter string of opponent
      * @return true if opponent is a Critter4, else false
      */
     public boolean fight(String opponent){
 
-        if(opponent.equals("L")){
+        if(opponent.equals("P")){
+            if(getEnergy() >= 80){
+                Critter4 child = new Critter4();
+                reproduce(child, getRandomInt(8));
+            }
+            return true;
+        }
+        else if(opponent.equals("@") || opponent.equals("H")){
             return true;
         }
 
@@ -71,16 +72,16 @@ public class Critter4 extends Critter{
      */
     public String toString(){
 
-        return "L";
+        return "P";
     }
 
     /**
      * Prints out how many cannibals currently on map
-     * @param cannibals list of all cannibals in population
+     * @param mantises list of all cannibals in population
      */
-    public static void runStats(java.util.List<Critter> cannibals){
+    public static void runStats(java.util.List<Critter> mantises){
 
-        System.out.println(cannibals.size() + " total Cannibals");
+        System.out.println(mantises.size() + " total Mantises");
     }
 
 }
