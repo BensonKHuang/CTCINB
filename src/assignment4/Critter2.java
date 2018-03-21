@@ -68,11 +68,11 @@ public class Critter2 extends Critter{
     }
 
     /**
-     * Returns H to represent Herbivore
+     * Returns M to represent Herbivore
      */
     public String toString(){
 
-        return "H";
+        return "M";
     }
 
     /**
