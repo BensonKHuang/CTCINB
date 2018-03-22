@@ -556,6 +556,11 @@ public abstract class Critter {
 
     }
 
+
+    /**
+     * Sees if a Critter can flee into a spot.
+     * Critter moves if it can flee, otherwise it stays put.
+     */
     private void flee(){
 
         if(moved){
@@ -569,6 +574,12 @@ public abstract class Critter {
         }
     }
 
+    /**
+     *
+     * Checks if the spot denoted by dir is empty or not
+     * @param dir direction to check
+     * @return true if the spot in dir is empty
+     */
     private boolean isEmpty(int dir){
 
         int new_x = x_coord;
