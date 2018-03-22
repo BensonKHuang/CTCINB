@@ -88,7 +88,7 @@ public class Critter1 extends Critter {
      */
     public String toString() {
 
-        return "V";
+        return "1";
     }
 
     /**

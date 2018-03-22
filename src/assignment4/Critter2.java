@@ -72,7 +72,7 @@ public class Critter2 extends Critter{
      */
     public String toString(){
 
-        return "M";
+        return "2";
     }
 
     /**

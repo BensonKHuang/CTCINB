@@ -103,7 +103,7 @@ public class Critter3 extends Critter{
      *returns H to represent hindu
      */
     public String toString(){
-        return "H";
+        return "3";
     }
 
     /**
