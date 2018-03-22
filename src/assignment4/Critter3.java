@@ -112,7 +112,7 @@ public class Critter3 extends Critter{
      */
     public static void runStats(java.util.List<Critter> hindus){
 
-        System.out.println(hindus.size() + " total Hindus");
+        System.out.println(hindus.size() + " Hindus currently praying");
     }
 
     /**
