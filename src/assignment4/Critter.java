@@ -340,6 +340,7 @@ public abstract class Critter {
 	public static void worldTimeStep() {
 
 		individualTimeStep();
+		removeDeadCritters();
 		resolveEncounters();
 		postEncounterTimeStep();
         removeDeadCritters();
@@ -353,7 +354,6 @@ public abstract class Critter {
 	private static void individualTimeStep(){
 		for(Critter c : population){
 			c.doTimeStep();
-			c.energy -= Params.rest_energy_cost;
 		}
         List<Critter3> reincarnated = new ArrayList<>();
 		for(Critter3 hindu : reincarnation){
@@ -371,6 +371,7 @@ public abstract class Critter {
      */
 	private static void postEncounterTimeStep(){
 		for(Critter c: population){
+			c.energy -= Params.rest_energy_cost;
 			if(c.getEnergy() <= 0){
 				c.alive = false;
 			}
@@ -480,6 +481,7 @@ public abstract class Critter {
 		List<Critter> deadCritters = new java.util.ArrayList<>();
 		for(Critter c : population){
 			if(!c.alive || c.getEnergy() <= 0){
+				map.get(c.y_coord).get(c.x_coord).remove(c);
 				deadCritters.add(c);
 				if(c instanceof Critter3){
 				    ((Critter3) c).setDead();
